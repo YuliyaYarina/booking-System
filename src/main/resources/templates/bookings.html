@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bookings</title>
+</head>
+<body>
+
+<h1>Записи клиентов</h1>
+
+<form action="/web/bookings" method="post">
+    <input type="text" name="clientName" placeholder="Имя" />
+    <input type="text" name="phone" placeholder="Телефон" />
+    <input type="datetime-local" name="bookingTime" />
+    <button type="submit">Добавить</button>
+</form>
+
+<hr>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Телефон</th>
+        <th>Дата</th>
+    </tr>
+
+    <tr th:each="b : ${bookings}">
+        <td th:text="${b.id}"></td>
+        <td th:text="${b.clientName}"></td>
+        <td th:text="${b.phone}"></td>
+        <td th:text="${b.bookingTime}"></td>
+    </tr>
+
+</table>
+
+</body>
+</html>
