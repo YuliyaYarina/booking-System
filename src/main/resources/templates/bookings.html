@@ -1,37 +1,181 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Bookings</title>
+    <meta charset="UTF-8">
+    <title>Записи</title>
+
+    <style>
+
+        /* ===== 1. ОСНОВА ===== */
+        * {
+            box-sizing: border-box; /* чтобы ширина считалась правильно */
+        }
+
+        /* ===== 2. СТРАНИЦА ===== */
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f0f2f5;
+        }
+
+        /* ===== 3. ОБЩИЙ КОНТЕЙНЕР ===== */
+        .container {
+            width: 900px;
+            margin: 40px auto;
+        }
+
+        /* ===== 4. КАРТОЧКА ===== */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        /* ===== 5. ЗАГОЛОВОК ===== */
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        /* ===== 6. ФОРМА ===== */
+        .form-row {
+            display: flex;
+            gap: 10px; /* расстояние между полями */
+        }
+
+        /* ===== 7. INPUT ===== */
+        input {
+            flex: 1; /* все поля одинаковой ширины */
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        /* эффект при клике */
+        input:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+
+        /* ===== 8. КНОПКА ===== */
+        button {
+            padding: 12px 20px;
+            background: black;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #333;
+        }
+
+        /* ===== 9. ТАБЛИЦА ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        /* заголовки */
+        th {
+            text-align: left;
+            padding: 12px;
+            background: #fafafa;
+        }
+
+        /* строки */
+        td {
+            padding: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        /* эффект наведения */
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+    </style>
 </head>
+
 <body>
 
-<h1>Записи клиентов</h1>
+<div class="container">
 
-<form action="/web/bookings" method="post">
-    <input type="text" name="clientName" placeholder="Имя" />
-    <input type="text" name="phone" placeholder="Телефон" />
-    <input type="datetime-local" name="bookingTime" />
-    <button type="submit">Добавить</button>
-</form>
+    <!-- ===== КАРТОЧКА С ФОРМОЙ ===== -->
+    <div class="card">
 
-<hr>
+        <h1>Записи клиентов</h1>
 
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Имя</th>
-        <th>Телефон</th>
-        <th>Дата</th>
-    </tr>
+        <!--
+        Форма отправляет POST запрос на /web/bookings
+        -->
+        <form action="/web/bookings" method="post">
 
-    <tr th:each="b : ${bookings}">
-        <td th:text="${b.id}"></td>
-        <td th:text="${b.clientName}"></td>
-        <td th:text="${b.phone}"></td>
-        <td th:text="${b.bookingTime}"></td>
-    </tr>
+            <div class="form-row">
 
-</table>
+                <!--
+                name="clientName"
+                ↓
+                попадёт в контроллер как @RequestParam String clientName
+                -->
+                <input type="text" name="clientName" placeholder="Имя" required>
+
+                <!--
+                name="phone"
+                ↓
+                попадёт в контроллер
+                -->
+                <input type="text" name="phone" placeholder="Телефон" required>
+
+                <!--
+                datetime-local = встроенный выбор даты и времени
+                -->
+                <input type="datetime-local" name="bookingTime" required>
+
+                <button type="submit">Добавить</button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- ===== КАРТОЧКА С ТАБЛИЦЕЙ ===== -->
+    <div class="card">
+
+        <table>
+
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Дата</th>
+            </tr>
+
+            <!--
+            th:each="b : ${bookings}"
+            ↓
+            Spring передаёт список bookings из контроллера
+            -->
+            <tr th:each="b : ${bookings}">
+
+                <!--
+                th:text заменяет содержимое ячейки
+                -->
+                <td th:text="${b.id}"></td>
+                <td th:text="${b.clientName}"></td>
+                <td th:text="${b.phone}"></td>
+                <td th:text="${b.bookingTime}"></td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+</div>
 
 </body>
 </html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход</title>
+
+    <style>
+
+        /* ===== 1. ОСНОВА (чтобы всё считалось правильно) ===== */
+        * {
+            box-sizing: border-box; /* ширина включает padding и border */
+        }
+
+        /* ===== 2. СТРАНИЦА ===== */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f0f2f5;
+            font-family: Arial;
+        }
+
+        /* ===== 3. КАРТОЧКА ===== */
+        .login-container {
+            width: 350px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        /* ===== 4. ЗАГОЛОВОК ===== */
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* ===== 5. ГРУППА INPUT (для иконок и label) ===== */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        /* ===== 6. САМО ПОЛЕ ===== */
+        .input-group input {
+            width: 100%;
+            padding: 14px 40px 14px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        /* 👉 Объяснение padding:
+           14px сверху/снизу
+           12px слева
+           40px справа (чтобы не наезжал глаз 👁)
+        */
+
+        /* ===== 7. ПЛАВАЮЩИЙ LABEL ===== */
+        .input-group label {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 0 4px;
+            color: #999;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        /* 👉 Когда фокус или есть текст */
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: -8px;
+            font-size: 12px;
+            color: #2575fc;
+        }
+
+        /* ===== 8. ФОКУС ===== */
+        input:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+
+        /* ===== 9. ГЛАЗ 👁 ===== */
+        .eye {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* ===== 10. КНОПКА ===== */
+        button {
+            width: 100%;
+            padding: 14px;
+            background: black;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== 11. АНИМАЦИЯ ЗАГРУЗКИ ===== */
+        button.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        button.loading::after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            border: 3px solid white;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* ===== 12. ОШИБКА ===== */
+        .error {
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .error.show {
+            opacity: 1;
+        }
+
+        /* ===== 13. ТРЯСКА ===== */
+        .shake {
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="login-container" id="box">
+    <h2>Вход</h2>
+
+    <div class="error" id="errorMsg"></div>
+
+    <form method="post" action="/login" id="form">
+
+        <!-- ЛОГИН -->
+        <div class="input-group">
+            <input type="text" name="username" required placeholder=" ">
+            <label>Логин</label>
+        </div>
+
+        <!-- ПАРОЛЬ -->
+        <div class="input-group">
+            <input type="password" name="password" id="password" required placeholder=" ">
+            <label>Пароль</label>
+            <span class="eye" id="eye">👁</span>
+        </div>
+
+        <button type="submit" id="btn">Войти</button>
+    </form>
+</div>
+
+<script>
+
+    const eye = document.getElementById('eye');
+    const password = document.getElementById('password');
+    const btn = document.getElementById('btn');
+    const form = document.getElementById('form');
+    const errorDiv = document.getElementById('errorMsg');
+    const box = document.getElementById('box');
+
+    /* ===== 1. ПОКАЗАТЬ ПАРОЛЬ ===== */
+    eye.onclick = () => {
+        password.type = password.type === "password" ? "text" : "password";
+    };
+
+    /* ===== 2. АНИМАЦИЯ КНОПКИ ===== */
+    form.addEventListener('submit', () => {
+        btn.classList.add('loading');
+    });
+
+    /* ===== 3. ОШИБКА ИЗ SPRING (?error) ===== */
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has('error')) {
+        errorDiv.textContent = "Неверный логин или пароль";
+        errorDiv.classList.add('show');
+
+        // тряска
+        box.classList.add('shake');
+
+        setTimeout(() => {
+            errorDiv.classList.remove('show');
+            box.classList.remove('shake');
+        }, 3000);
+    }
+
+</script>
+
+</body>
+</html>
