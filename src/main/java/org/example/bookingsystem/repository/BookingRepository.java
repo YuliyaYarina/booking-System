@@ -1,6 +1,7 @@
 package org.example.bookingsystem.repository;
 
 import org.example.bookingsystem.model.Booking;
+import org.example.bookingsystem.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -13,5 +14,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByBookingTimeBetween(LocalDateTime start, LocalDateTime end);
 
 
+    List<Booking> findByUser(User user);
 
 }
