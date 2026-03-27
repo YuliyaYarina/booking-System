@@ -2,13 +2,10 @@ package org.example.bookingsystem.controller.api.bookings;
 
 import org.example.bookingsystem.model.Booking;
 import org.example.bookingsystem.model.User;
-import org.example.bookingsystem.repository.BookingRepository;
-import org.example.bookingsystem.repository.UserRepository;
 import org.example.bookingsystem.service.BookingService;
-import org.springframework.ui.Model;
+import org.example.bookingsystem.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -16,17 +13,18 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService service;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public BookingController(BookingService service, UserRepository userRepository) {
+    public BookingController(UserService userService, BookingService service) {
         this.service = service;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
+
 
     @PostMapping
     public Booking create(@RequestBody Booking booking) {
 
-        User user = userRepository.findByUsername("admin").orElseThrow();
+        User user = userService.getCurrentUser();
         return service.create(booking, user);
     }
 

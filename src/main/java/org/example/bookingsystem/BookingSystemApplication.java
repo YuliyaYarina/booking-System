@@ -19,18 +19,16 @@ public class BookingSystemApplication {
     public static void main(String[] args) {
         SpringApplication.run(BookingSystemApplication.class, args);
     }
-//
-//
+
 //    @Bean
 //    CommandLineRunner init(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 //        return args -> {
-//            if (userRepository.findByUsername("admin").isEmpty()) {
+//            if (userRepository.findByUsername("user").isEmpty()) {
 //                User user = new User();
-//                user.setUsername("admin");
-//                user.setPassword(passwordEncoder.encode("1234"));
+//                user.setUsername("user");
+//                user.setPassword(passwordEncoder.encode("0000"));
 //                userRepository.save(user);
 //            }
 //        };
 //    }
-
 }
