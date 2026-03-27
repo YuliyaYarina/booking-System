@@ -1,8 +1,9 @@
 package org.example.bookingsystem.controller.web.bookings;
 
 import org.example.bookingsystem.model.Booking;
-import org.example.bookingsystem.repository.BookingRepository;
-import org.example.bookingsystem.repository.UserRepository;
+import org.example.bookingsystem.model.User;
+import org.example.bookingsystem.service.BookingService;
+import org.example.bookingsystem.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,23 +18,24 @@ import java.time.LocalDateTime;
 @RequestMapping("/web/bookings")
 public class WebBookingController {
 
-    private final BookingRepository repository;
-    private final UserRepository userRepository;
+    private final BookingService bookingService;
+    private final UserService userService;
 
-    public WebBookingController(BookingRepository repository, UserRepository userRepository) {
-        this.repository = repository;
-        this.userRepository = userRepository;
+    public WebBookingController(BookingService bookingService, UserService userService) {
+        this.bookingService = bookingService;
+        this.userService = userService;
     }
 
     @GetMapping
     public String view(Model model, Principal principal) {
         String username = principal.getName();
 
-        if (userRepository.findByUsername(username).isEmpty()) {
-            model.addAttribute("user", userRepository.findByUsername(username));
+        if (userService.findByUsername(username).isEmpty()) {
+            model.addAttribute("user", userService.findByUsername(username));
         }
+        User user = userService.getCurrentUser();
 
-        model.addAttribute("bookings", repository.findAll());
+        model.addAttribute("bookings", bookingService.findByUserId(user.getId()));
         return "bookings";
     }
 
@@ -48,7 +50,7 @@ public class WebBookingController {
         b.setPhone(phone);
         b.setBookingTime(LocalDateTime.parse(bookingTime));
 
-        repository.save(b);
+        bookingService.create(b, userService.getCurrentUser());
 
         return "redirect:/web/bookings";
     }
