@@ -1,18 +1,19 @@
 package org.example.bookingsystem.controller.web.bookings;
 
 import org.example.bookingsystem.model.Booking;
+import org.example.bookingsystem.model.Role;
 import org.example.bookingsystem.model.User;
 import org.example.bookingsystem.service.BookingService;
 import org.example.bookingsystem.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/web/bookings")
@@ -28,14 +29,21 @@ public class WebBookingController {
 
     @GetMapping
     public String view(Model model, Principal principal) {
-        String username = principal.getName();
-
-        if (userService.findByUsername(username).isEmpty()) {
-            model.addAttribute("user", userService.findByUsername(username));
+        User currentUser = userService.getCurrentUser();
+        if (currentUser == null) {
+            return "redirect:/login";
         }
-        User user = userService.getCurrentUser();
+        List<Booking> bookings;
 
-        model.addAttribute("bookings", bookingService.findByUserId(user.getId()));
+        if (currentUser.getRoles().contains(Role.ADMIN)) {
+            // ADMIN видит все записи
+            bookings = bookingService.getAll();
+        } else {
+            // USER видит только свои записи
+            bookings = bookingService.findByUserId(currentUser.getId());
+        }
+
+        model.addAttribute("bookings", bookings);
         return "bookings";
     }
 
@@ -45,13 +53,47 @@ public class WebBookingController {
             @RequestParam String phone,
             @RequestParam String bookingTime
     ) {
-        Booking b = new Booking();
-        b.setClientName(clientName);
-        b.setPhone(phone);
-        b.setBookingTime(LocalDateTime.parse(bookingTime));
+        Booking booking = new Booking();
+        booking.setClientName(clientName);
+        booking.setPhone(phone);
+        booking.setBookingTime(LocalDateTime.parse(bookingTime));
+        bookingService.create(booking, userService.getCurrentUser());
+        return "redirect:/web/bookings";
+    }
 
-        bookingService.create(b, userService.getCurrentUser());
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable Long id, Model model) {
+        Booking booking = bookingService.findById(id);
+        checkOwnershipOrAdmin(booking);
+        model.addAttribute("booking", booking);
+        return "edit-booking";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        Booking booking = bookingService.findById(id);
+        checkOwnershipOrAdmin(booking);
+        bookingService.delete(id);
+        return "redirect:/web/bookings";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String update(@PathVariable Long id, Booking updatedBooking) {
+        Booking booking = bookingService.findById(id);
+        checkOwnershipOrAdmin(booking);
+
+        booking.setClientName(updatedBooking.getClientName());
+        booking.setBookingTime(updatedBooking.getBookingTime());
+        bookingService.save(booking);
 
         return "redirect:/web/bookings";
+    }
+
+    private void checkOwnershipOrAdmin(Booking booking) {
+        User currentUser = userService.getCurrentUser();
+        if (!booking.getUser().getId().equals(currentUser.getId()) &&
+                !currentUser.getRoles().contains(Role.ADMIN)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
     }
 }

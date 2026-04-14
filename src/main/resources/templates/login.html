@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Вход</title>
@@ -50,6 +50,13 @@
             border-radius: 6px;
             font-size: 16px;
             transition: all 0.3s ease;
+        }
+
+        /* отключаем нативную кнопку показа пароля в Edge/IE,
+           чтобы не дублировалась с нашей кнопкой-глазом */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none;
         }
 
         /* 👉 Объяснение padding:
@@ -166,7 +173,8 @@
 
     <div class="error" id="errorMsg"></div>
 
-    <form method="post" action="/login" id="form">
+    <form method="post" th:action="@{/login}" id="form">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
         <!-- ЛОГИН -->
         <div class="input-group">
