@@ -78,12 +78,17 @@ public class WebBookingController {
     }
 
     @PostMapping("/edit/{id}")
-    public String update(@PathVariable Long id, Booking updatedBooking) {
+    public String update(        @PathVariable Long id,
+                                 @RequestParam String clientName,
+                                 @RequestParam String phone,
+                                 @RequestParam String bookingTime
+    ) {
         Booking booking = bookingService.findById(id);
         checkOwnershipOrAdmin(booking);
 
-        booking.setClientName(updatedBooking.getClientName());
-        booking.setBookingTime(updatedBooking.getBookingTime());
+        booking.setClientName(clientName);
+        booking.setPhone(phone);
+        booking.setBookingTime(LocalDateTime.parse(bookingTime));
         bookingService.save(booking);
 
         return "redirect:/web/bookings";
