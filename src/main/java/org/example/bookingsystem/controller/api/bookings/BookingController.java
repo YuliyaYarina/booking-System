@@ -2,42 +2,39 @@ package org.example.bookingsystem.controller.api.bookings;
 
 import org.example.bookingsystem.model.Booking;
 import org.example.bookingsystem.model.User;
-import org.example.bookingsystem.repository.BookingRepository;
-import org.example.bookingsystem.repository.UserRepository;
 import org.example.bookingsystem.service.BookingService;
-import org.springframework.ui.Model;
+import org.example.bookingsystem.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")
 public class BookingController {
 
-    private final BookingService service;
-    private final UserRepository userRepository;
+    private final BookingService bookingService;
+    private final UserService userService;
 
-    public BookingController(BookingService service, UserRepository userRepository) {
-        this.service = service;
-        this.userRepository = userRepository;
+    public BookingController(UserService userService, BookingService service) {
+        this.bookingService = service;
+        this.userService = userService;
     }
 
     @PostMapping
     public Booking create(@RequestBody Booking booking) {
 
-        User user = userRepository.findByUsername("admin").orElseThrow();
-        return service.create(booking, user);
+        User user = userService.getCurrentUser();
+        return bookingService.create(booking, user);
     }
 
     @GetMapping
     public List<Booking> getAll() {
-        return service.getAll();
+        return bookingService.getAll();
     }
 
     @GetMapping("/by-phone")
     public List<Booking> getByPhone(@RequestParam String phone) {
-        return service.getByPhone(phone);
+        return bookingService.getByPhone(phone);
     }
 
     @GetMapping("/by-date")
@@ -45,11 +42,11 @@ public class BookingController {
             @RequestParam String start,
             @RequestParam String end
     ) {
-        return service.getByDate(start, end);
+        return bookingService.getByDate(start, end);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        service.delete(id);
+        bookingService.delete(id);
     }
 }

@@ -24,6 +24,46 @@
             margin: 40px auto;
         }
 
+        /* выход с аккаунта*/
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #333;
+        }
+
+        .logout-arrow {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #fff;
+            border-right: 2px solid #fff;
+            transform: rotate(45deg);
+            margin-right: 2px;
+        }
+
         /* ===== 4. КАРТОЧКА ===== */
         .card {
             background: white;
@@ -95,6 +135,28 @@
         tr:hover {
             background: #f9f9f9;
         }
+        /* ===== КРАСНЫЙ (удаление) ===== */
+        table button[type="submit"] {
+            background: #e74c3c;
+        }
+
+        table button[type="submit"]:hover {
+            background: #c0392b;
+        }
+
+        /* ===== СИНИЙ (редактирование) ===== */
+        button[type="button"] {
+            background: #3498db;
+        }
+
+        button[type="button"]:hover {
+            background: #2980b9;
+        }
+
+        /* отступ между кнопками */
+        button {
+            margin-right: 5px;
+        }
 
     </style>
 </head>
@@ -103,15 +165,33 @@
 
 <div class="container">
 
+    <div class="header">
+        <h1>Записи клиентов</h1>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}"/>
+            <button type="submit" class="logout-btn">
+                <span class="logout-arrow" aria-hidden="true"></span>
+                Выйти
+            </button>
+        </form>
+    </div>
+
+
     <!-- ===== КАРТОЧКА С ФОРМОЙ ===== -->
     <div class="card">
-
-        <h1>Записи клиентов</h1>
 
         <!--
         Форма отправляет POST запрос на /web/bookings
         -->
-        <form action="/web/bookings" method="post">
+        <form th:action="@{/web/bookings}" method="post">
+
+            <!-- CSRF защита (обязательно для POST) -->
+            <!-- Spring проверяет, что запрос отправлен с сайта -->
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}"/>
 
             <div class="form-row">
 
@@ -142,6 +222,12 @@
 
     </div>
 
+    <!-- ===== форма фильтрации ===== -->
+    <script>
+        function confirmDelete() {
+            return confirm("Вы уверены, что хотите удалить эту запись?");
+        }
+    </script>
     <!-- ===== КАРТОЧКА С ТАБЛИЦЕЙ ===== -->
     <div class="card">
 
@@ -152,6 +238,7 @@
                 <th>Имя</th>
                 <th>Телефон</th>
                 <th>Дата</th>
+                <th>Действия</th>
             </tr>
 
             <!--
@@ -167,15 +254,46 @@
                 <td th:text="${b.id}"></td>
                 <td th:text="${b.clientName}"></td>
                 <td th:text="${b.phone}"></td>
-                <td th:text="${b.bookingTime}"></td>
+                <!-- Красивый формат даты -->
+                <td th:text="${#temporals.format(b.bookingTime, 'dd.MM.yyyy HH:mm')}"></td>
+                <td>
+
+                    <!-- ===== УДАЛЕНИЕ ===== -->
+                    <form th:action="@{'/web/bookings/delete/' + ${b.id}}"
+                          method="post"
+                          style="display:inline;"
+                          onsubmit="return confirmDelete()">
+<!--                        ?????????????????????????????????????????????????????????????????/????????????????????-->
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}"/>
+<!--                        ??????????????????????????????????????????????????????????????????????????????????-->
+                        <button type="submit">Удалить</button>
+                    </form>
+
+
+                    <!-- ===== РЕДАКТИРОВАНИЕ ===== -->
+                    <!-- Переход на страницу редактирования -->
+
+                    <a th:href="@{'/web/bookings/edit/' + ${b.id}}" class="btn">Изменить</a>
+                </td>
 
             </tr>
 
         </table>
+<!--        <=========Pagination (странички) =========>-->
+        <div style="margin-top:15px;">
+    <span th:if="${page > 1}">
+        <a th:href="@{/web/bookings(page=${page - 1})}">« Назад</a>
+    </span>
+            <span th:text="${page}">1</span>
+            <span th:if="${hasNext}">
+        <a th:href="@{/web/bookings(page=${page + 1})}">Вперед »</a>
+    </span>
+        </div>
 
     </div>
 
 </div>
-
 </body>
 </html>
