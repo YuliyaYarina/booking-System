@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 public interface BookingService {
+    Booking save(Booking booking);
+
     Booking create(Booking booking, User user);
 
     List<Booking> getAll();
@@ -20,4 +22,6 @@ public interface BookingService {
     void delete(@PathVariable Long id);
 
     List<Booking> findByUserId(Long userId);
+
+    Booking findById(Long id);
 }

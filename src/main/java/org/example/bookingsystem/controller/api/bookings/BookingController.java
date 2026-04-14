@@ -12,30 +12,29 @@ import java.util.List;
 @RequestMapping("/bookings")
 public class BookingController {
 
-    private final BookingService service;
+    private final BookingService bookingService;
     private final UserService userService;
 
     public BookingController(UserService userService, BookingService service) {
-        this.service = service;
+        this.bookingService = service;
         this.userService = userService;
     }
-
 
     @PostMapping
     public Booking create(@RequestBody Booking booking) {
 
         User user = userService.getCurrentUser();
-        return service.create(booking, user);
+        return bookingService.create(booking, user);
     }
 
     @GetMapping
     public List<Booking> getAll() {
-        return service.getAll();
+        return bookingService.getAll();
     }
 
     @GetMapping("/by-phone")
     public List<Booking> getByPhone(@RequestParam String phone) {
-        return service.getByPhone(phone);
+        return bookingService.getByPhone(phone);
     }
 
     @GetMapping("/by-date")
@@ -43,11 +42,11 @@ public class BookingController {
             @RequestParam String start,
             @RequestParam String end
     ) {
-        return service.getByDate(start, end);
+        return bookingService.getByDate(start, end);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        service.delete(id);
+        bookingService.delete(id);
     }
 }

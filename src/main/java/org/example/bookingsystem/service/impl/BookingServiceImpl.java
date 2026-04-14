@@ -19,6 +19,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public Booking save(Booking booking) {
+        return repository.save(booking);
+    }
+    @Override
     public Booking create(Booking booking, User user) {
         booking.setUser(user);
         return repository.save(booking);
@@ -55,5 +59,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<Booking> findByUserId(Long userId) {
         return repository.findByUserId(userId);
+    }
+
+    @Override
+    public Booking findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow();
     }
 }
