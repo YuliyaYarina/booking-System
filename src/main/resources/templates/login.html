@@ -163,6 +163,15 @@
             75% { transform: translateX(-5px); }
         }
 
+        .public-link {
+            display: block;
+            margin-top: 14px;
+            text-align: center;
+            color: #2575fc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
     </style>
 </head>
 
@@ -191,6 +200,7 @@
 
         <button type="submit" id="btn">Войти</button>
     </form>
+    <a class="public-link" th:href="@{/public/booking}">Самостоятельная запись</a>
 </div>
 
 <script>

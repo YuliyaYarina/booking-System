@@ -20,7 +20,7 @@
 
         /* ===== 3. ОБЩИЙ КОНТЕЙНЕР ===== */
         .container {
-            width: 900px;
+            width: min(1200px, 95vw);
             margin: 40px auto;
         }
 
@@ -92,10 +92,25 @@
             border-radius: 6px;
         }
 
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            min-height: 90px;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+        }
+
         /* эффект при клике */
-        input:focus {
+        input:focus,
+        textarea:focus {
             border-color: #2575fc;
             outline: none;
+        }
+
+        .description-row {
+            margin-top: 10px;
         }
 
         /* ===== 8. КНОПКА ===== */
@@ -116,19 +131,51 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: auto;
+            min-width: 900px;  /* защищает таблицу от «ломания» колонок. */
         }
 
         /* заголовки */
         th {
             text-align: left;
-            padding: 12px;
+            padding: 14px;
             background: #fafafa;
         }
 
         /* строки */
         td {
-            padding: 12px;
+            padding: 14px;
             border-top: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 30%;
+        }
+
+        td:nth-child(4) {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        th:last-child,
+        td:last-child {
+            width: 220px;
+        }
+
+        .actions-cell {
+            white-space: nowrap;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .actions form {
+            margin: 0;
         }
 
         /* эффект наведения */
@@ -138,6 +185,8 @@
         /* ===== КРАСНЫЙ (удаление) ===== */
         table button[type="submit"] {
             background: #e74c3c;
+            margin-right: 0;
+            padding: 10px 14px;
         }
 
         table button[type="submit"]:hover {
@@ -153,9 +202,40 @@
             background: #2980b9;
         }
 
-        /* отступ между кнопками */
-        button {
-            margin-right: 5px;
+        .btn { /* синяя кнопка "Изменить" */
+            display: inline-block;
+            padding: 10px 14px;
+            background: #3498db;
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+            .btn:hover {
+                background: #2980b9;
+            }
+
+            .table-wrapper { /* добавляет прокрутку вместо сдвигов макета */
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            @media (max-width: 980px) { /* адаптирует форму под узкие экраны */
+                .container {
+                    width: 100%;
+                    padding: 0 12px;
+                }
+
+                .form-row {
+                    flex-wrap: wrap;
+                }
+
+                .form-row input,
+                .button-row {
+                    width: 100%;
+                    flex: 1 1 100%;
+                }
         }
 
     </style>
@@ -217,6 +297,9 @@
                 <button type="submit">Добавить</button>
 
             </div>
+            <div class="description-row">
+                <textarea name="workDescription" placeholder="Описание работ" required></textarea>
+            </div>
 
         </form>
 
@@ -231,12 +314,14 @@
     <!-- ===== КАРТОЧКА С ТАБЛИЦЕЙ ===== -->
     <div class="card">
 
+        <div class="table-wrapper">
         <table>
 
             <tr>
                 <th>ID</th>
                 <th>Имя</th>
                 <th>Телефон</th>
+                <th>Описание работ</th>
                 <th>Дата</th>
                 <th>Действия</th>
             </tr>
@@ -254,9 +339,11 @@
                 <td th:text="${b.id}"></td>
                 <td th:text="${b.clientName}"></td>
                 <td th:text="${b.phone}"></td>
+                <td th:text="${b.workDescription}"></td>
                 <!-- Красивый формат даты -->
                 <td th:text="${#temporals.format(b.bookingTime, 'dd.MM.yyyy HH:mm')}"></td>
-                <td>
+                <td class="действия-ячейка">
+                    <div class="действия">
 
                     <!-- ===== УДАЛЕНИЕ ===== -->
                     <form th:action="@{'/web/bookings/delete/' + ${b.id}}"
@@ -276,11 +363,13 @@
                     <!-- Переход на страницу редактирования -->
 
                     <a th:href="@{'/web/bookings/edit/' + ${b.id}}" class="btn">Изменить</a>
+                    </div>
                 </td>
 
             </tr>
 
         </table>
+            </div>
 <!--        <=========Pagination (странички) =========>-->
         <div style="margin-top:15px;">
     <span th:if="${page > 1}">

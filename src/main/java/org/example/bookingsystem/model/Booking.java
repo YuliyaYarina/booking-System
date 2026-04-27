@@ -13,6 +13,7 @@ public class Booking {
     private Long id;
     private String clientName;
     private String phone;
+    private String workDescription;
     private LocalDateTime bookingTime;
 
     @ManyToOne
