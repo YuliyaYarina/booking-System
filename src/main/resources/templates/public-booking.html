@@ -43,14 +43,18 @@
             font-size: 14px;
             color: #333;
         }
-        input, select {
+        input, select, textarea {
             width: 100%;
             border: 1px solid #ccc;
             border-radius: 8px;
             padding: 11px 12px;
             font-size: 15px;
         }
-        input:focus, select:focus {
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+        input:focus, select:focus, textarea:focus {
             border-color: #2575fc;
             outline: none;
         }
@@ -97,6 +101,11 @@
         </div>
 
         <div class="field">
+            <label for="workDescription">Описание работ</label>
+            <textarea id="workDescription" name="workDescription" placeholder="Опишите, что нужно сделать" required></textarea>
+        </div>
+
+        <div class="field">
             <label for="bookingTime">Дата и время</label>
             <input id="bookingTime" type="datetime-local" name="bookingTime" required>
         </div>
@@ -104,7 +113,7 @@
         <div class="field">
             <label for="userId">К кому записаться</label>
             <select id="userId" name="userId" required>
-                <option value="" disabled selected>Выберите пользователя</option>
+                <option value="" disabled selected>Выберите специалиста</option>
                 <option th:each="user : ${users}"
                         th:value="${user.id}"
                         th:text="${user.username}"></option>

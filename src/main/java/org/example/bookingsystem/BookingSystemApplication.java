@@ -27,9 +27,9 @@ public class BookingSystemApplication {
 //        return args -> {
 //            if (userRepository.findByUsername("user").isEmpty()) {
 //                User user = new User();
-//                user.setUsername("user");
-//                user.setRoles(Collections.singleton(Role.ADMIN));
-//                user.setPassword(passwordEncoder.encode("1234"));
+//                user.setUsername("Инга П.");
+//                user.setRoles(Collections.singleton(Role.USER));
+//                user.setPassword(passwordEncoder.encode("0000"));
 //                userRepository.save(user);
 //            }
 //        };

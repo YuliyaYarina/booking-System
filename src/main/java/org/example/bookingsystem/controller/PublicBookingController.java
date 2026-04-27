@@ -35,6 +35,7 @@ public class PublicBookingController {
     @PostMapping("/public/booking")
     public String createPublicBooking(@RequestParam String clientName,
                                       @RequestParam String phone,
+                                      @RequestParam String workDescription,
                                       @RequestParam String bookingTime,
                                       @RequestParam Long userId) {
         User selectedUser = userService.findById(userId)
@@ -43,6 +44,7 @@ public class PublicBookingController {
         Booking booking = new Booking();
         booking.setClientName(clientName);
         booking.setPhone(phone);
+        booking.setWorkDescription(workDescription);
         booking.setBookingTime(LocalDateTime.parse(bookingTime));
         bookingService.create(booking, selectedUser);
 
