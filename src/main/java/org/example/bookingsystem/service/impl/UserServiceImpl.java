@@ -5,7 +5,9 @@ import org.example.bookingsystem.repository.UserRepository;
 import org.example.bookingsystem.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.example.bookingsystem.model.Role;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,6 +28,16 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findByUsername(username)
                 .orElseThrow();
+    }
+
+    @Override
+    public List<User> findBookableUsers() {
+        return userRepository.findByRolesContaining(Role.USER);
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
 
     @Override

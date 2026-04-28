@@ -51,11 +51,13 @@ public class WebBookingController {
     public String create(
             @RequestParam String clientName,
             @RequestParam String phone,
+            @RequestParam String workDescription,
             @RequestParam String bookingTime
     ) {
         Booking booking = new Booking();
         booking.setClientName(clientName);
         booking.setPhone(phone);
+        booking.setWorkDescription(workDescription);
         booking.setBookingTime(LocalDateTime.parse(bookingTime));
         bookingService.create(booking, userService.getCurrentUser());
         return "redirect:/web/bookings";
@@ -81,6 +83,7 @@ public class WebBookingController {
     public String update(        @PathVariable Long id,
                                  @RequestParam String clientName,
                                  @RequestParam String phone,
+                                 @RequestParam String workDescription,
                                  @RequestParam String bookingTime
     ) {
         Booking booking = bookingService.findById(id);
@@ -88,6 +91,7 @@ public class WebBookingController {
 
         booking.setClientName(clientName);
         booking.setPhone(phone);
+        booking.setWorkDescription(workDescription);
         booking.setBookingTime(LocalDateTime.parse(bookingTime));
         bookingService.save(booking);
 

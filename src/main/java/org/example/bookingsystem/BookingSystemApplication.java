@@ -25,10 +25,10 @@ public class BookingSystemApplication {
 //    @Bean
 //    CommandLineRunner init(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 //        return args -> {
-//            if (userRepository.findByUsername("admin").isEmpty()) {
+//            if (userRepository.findByUsername("user").isEmpty()) {
 //                User user = new User();
-//                user.setUsername("admin");
-//                user.setRoles(Collections.singleton(Role.ADMIN));
+//                user.setUsername("Инга П.");
+//                user.setRoles(Collections.singleton(Role.USER));
 //                user.setPassword(passwordEncoder.encode("0000"));
 //                userRepository.save(user);
 //            }

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Самостоятельная запись</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+        .card {
+            width: 100%;
+            max-width: 520px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 28px;
+        }
+        h1 {
+            margin: 0 0 16px;
+            font-size: 24px;
+        }
+        p { color: #666; margin: 0 0 20px; }
+        .success {
+            background: #e8f7ec;
+            color: #1b6f3a;
+            border: 1px solid #b9e7c7;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+        }
+        .field { margin-bottom: 14px; }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 11px 12px;
+            font-size: 15px;
+        }
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            background: #111;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        button:hover { background: #333; }
+        .login-link {
+            display: inline-block;
+            margin-top: 14px;
+            color: #2575fc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Онлайн-запись</h1>
+    <p>Выберите специалиста и оставьте свои данные для записи.</p>
+
+    <div class="success" th:if="${param.success}">
+        Запись успешно создана. Мы свяжемся с вами для подтверждения.
+    </div>
+
+    <form th:action="@{/public/booking}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <div class="field">
+            <label for="clientName">Ваше имя</label>
+            <input id="clientName" type="text" name="clientName" required>
+        </div>
+
+        <div class="field">
+            <label for="phone">Телефон</label>
+            <input id="phone" type="text" name="phone" required>
+        </div>
+
+        <div class="field">
+            <label for="workDescription">Описание работ</label>
+            <textarea id="workDescription" name="workDescription" placeholder="Опишите, что нужно сделать" required></textarea>
+        </div>
+
+        <div class="field">
+            <label for="bookingTime">Дата и время</label>
+            <input id="bookingTime" type="datetime-local" name="bookingTime" required>
+        </div>
+
+        <div class="field">
+            <label for="userId">К кому записаться</label>
+            <select id="userId" name="userId" required>
+                <option value="" disabled selected>Выберите специалиста</option>
+                <option th:each="user : ${users}"
+                        th:value="${user.id}"
+                        th:text="${user.username}"></option>
+            </select>
+        </div>
+
+        <button type="submit">Отправить заявку</button>
+    </form>
+
+    <a class="login-link" th:href="@{/login}">Вход для сотрудников</a>
+</div>
+</body>
+</html>

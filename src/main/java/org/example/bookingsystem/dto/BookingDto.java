@@ -7,5 +7,6 @@ import java.time.LocalDateTime;
 public class BookingDto {
     private String clientName;
     private String phone;
+    private String workDescription;
     private LocalDateTime bookingTime;
 }

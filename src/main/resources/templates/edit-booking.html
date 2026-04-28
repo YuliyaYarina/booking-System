@@ -95,6 +95,7 @@
             <div class="form-row">
                 <input type="text" name="clientName" th:value="${booking.clientName}" placeholder="Имя" required>
                 <input type="text" name="phone" th:value="${booking.phone}" placeholder="Телефон" required>
+                <input type="text" name="workDescription" th:value="${booking.workDescription}" placeholder="Описание работ" required>
                 <input type="datetime-local"
                        name="bookingTime"
                        th:value="${#temporals.format(booking.bookingTime, 'yyyy-MM-dd''T''HH:mm')}"
