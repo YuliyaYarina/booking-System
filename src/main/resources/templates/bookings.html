@@ -126,33 +126,29 @@
         }
 
         .filter-card {
-            padding-top: 18px;
-            padding-bottom: 18px;
+            padding: 14px 16px;
+            background: #fff;
         }
 
         .filters-form {
             display: flex;
-            justify-content: space-between;
-            align-items: end;
-            gap: 16px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
         }
 
         .filter-fields {
             display: flex;
-            gap: 12px;
-            align-items: end;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-        }
-
-        .filter-group-date {
-            flex: 0 0 auto;
+            gap: 4px;
         }
 
         .filter-group label {
@@ -163,23 +159,26 @@
             font-weight: 600;
         }
 
-        .filter-date {
-            width: 160px;
-            min-width: 160px;
-            max-width: 160px;
-            flex: 0 0 160px;
-        }
-
+        .filter-date,
         .filter-master {
             width: 210px;
             min-width: 210px;
             background: #fff;
         }
 
+        .filter-group-date {
+            flex: 1 1 190px;
+        }
+
+        .filter-group-master {
+            flex: 1 1 220px;
+        }
+
         .filter-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
+            flex: 0 0 auto;
         }
 
         .filter-actions button,
@@ -348,19 +347,19 @@
                     flex: 1 1 100%;
                 }
 
+                .filters-form {
+                    flex-wrap: wrap;
+                    align-items: stretch;
+                }
+
                 .filter-fields {
                     width: 100%;
+                    flex-wrap: wrap;
                 }
 
-                .filter-date,
-                .filter-master {
-                    width: 100%;
-                    min-width: 0;
+                .filter-group-date,
+                .filter-group-master {
                     flex: 1 1 100%;
-                }
-
-                .filters-form {
-                    align-items: stretch;
                 }
 
                 .filter-actions {
@@ -444,7 +443,7 @@
                     <input id="bookingDay" class="filter-date" type="date" name="bookingDay" th:value="${selectedBookingDay}">
                 </div>
 
-                <div class="filter-group" th:if="${isAdmin}">
+                <div class="filter-group filter-group-master" th:if="${isAdmin}">
                     <label for="masterId">Мастер</label>
                     <select id="masterId" name="masterId" class="filter-master">
                         <option value="">Все мастера</option>
@@ -499,7 +498,7 @@
                 <td th:text="${b.workDescription}"></td>
                 <!-- Красивый формат даты -->
                 <td th:text="${#temporals.format(b.bookingTime, 'dd.MM.yyyy HH:mm')}"></td>
-<!--                <td th:if="${isAdmin}" th:text="${b.user != null ? b.user.username : '-'}"></td>-->
+                <td th:if="${isAdmin}" th:text="${b.user != null ? b.user.username : '-'}"></td>
                 <td class="actions-cell">
                     <div class="actions">
 
@@ -528,17 +527,6 @@
 
         </table>
             </div>
-<!--        <=========Pagination (странички) =========>-->
-        <div style="margin-top:15px;">
-    <span th:if="${page > 1}">
-        <a th:href="@{/web/bookings(page=${page - 1})}">« Назад</a>
-    </span>
-            <span th:text="${page}">1</span>
-            <span th:if="${hasNext}">
-        <a th:href="@{/web/bookings(page=${page + 1})}">Вперед »</a>
-    </span>
-        </div>
-
     </div>
 
 </div>
