@@ -43,6 +43,9 @@ public class WebBookingController {
         }
 
         LocalDate selectedDay = parseDay(bookingDay);
+        if (selectedDay == null) {
+            selectedDay = LocalDate.now();
+        }
         boolean isAdmin = currentUser.getRoles().contains(Role.ADMIN);
         Long selectedMasterId = isAdmin ? masterId : null;
 
@@ -52,8 +55,22 @@ public class WebBookingController {
                 selectedMasterId
         );
 
+        List<Booking> upcomingBookings = bookings;
+        List<Booking> passedBookings = List.of();
+        LocalDateTime now = LocalDateTime.now();
+        if (selectedDay.equals(LocalDate.now())) {
+            upcomingBookings = bookings.stream()
+                    .filter(booking -> !booking.getBookingTime().isBefore(now))
+                    .collect(Collectors.toList());
+            passedBookings = bookings.stream()
+                    .filter(booking -> booking.getBookingTime().isBefore(now))
+                    .collect(Collectors.toList());
+        }
+
         model.addAttribute("bookings", bookings);
-        model.addAttribute("selectedBookingDay", bookingDay);
+        model.addAttribute("upcomingBookings", upcomingBookings);
+        model.addAttribute("passedBookings", passedBookings);
+        model.addAttribute("selectedBookingDay", selectedDay.toString());
         model.addAttribute("selectedMasterId", selectedMasterId);
         model.addAttribute("isAdmin", isAdmin);
 

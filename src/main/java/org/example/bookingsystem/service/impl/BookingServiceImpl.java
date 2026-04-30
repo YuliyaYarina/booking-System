@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -74,21 +75,27 @@ public class BookingServiceImpl implements BookingService {
 
         if (isAdmin) {
             if (dayStart != null && masterId != null) {
-                return repository.findByBookingTimeBetweenAndUserId(dayStart, dayEnd, masterId);
+                return sortByTime(repository.findByBookingTimeBetweenAndUserId(dayStart, dayEnd, masterId));
             }
             if (dayStart != null) {
-                return repository.findByBookingTimeBetween(dayStart, dayEnd);
+                return sortByTime(repository.findByBookingTimeBetween(dayStart, dayEnd));
             }
             if (masterId != null) {
-                return repository.findByUserId(masterId);
+                return sortByTime(repository.findByUserId(masterId));
             }
-            return repository.findAll();
+            return sortByTime(repository.findAll());
         }
 
         if (dayStart != null) {
-            return repository.findByBookingTimeBetweenAndUserId(dayStart, dayEnd, currentUser.getId());
+            return sortByTime(repository.findByBookingTimeBetweenAndUserId(dayStart, dayEnd, currentUser.getId()));
         }
-        return repository.findByUserId(currentUser.getId());
+        return sortByTime(repository.findByUserId(currentUser.getId()));
+    }
+
+    private List<Booking> sortByTime(List<Booking> bookings) {
+        return bookings.stream()
+                .sorted(Comparator.comparing(Booking::getBookingTime))
+                .toList();
     }
 
     @Override
