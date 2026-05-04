@@ -78,6 +78,11 @@
             margin-bottom: 20px;
         }
 
+        h2 {
+            margin: 0 0 14px;
+            font-size: 18px;
+        }
+
         /* ===== 6. ФОРМА ===== */
         .form-row {
             display: flex;
@@ -132,7 +137,7 @@
 
         .filters-form {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: 10px;
             flex-wrap: nowrap;
         }
@@ -161,8 +166,8 @@
 
         .filter-date,
         .filter-master {
-            width: 210px;
-            min-width: 210px;
+            width: 100%;
+            min-width: 0;
             background: #fff;
         }
 
@@ -176,15 +181,34 @@
 
         .filter-actions {
             display: flex;
-            gap: 6px;
-            align-items: center;
+            flex-direction: column;
+            gap: 4px;
+            align-items: stretch;
             flex: 0 0 auto;
+            min-width: 232px;
         }
 
         .filter-actions button,
         .filter-actions .btn {
             min-width: 112px;
             text-align: center;
+        }
+
+        .filter-actions-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: transparent;
+            user-select: none;
+            font-weight: 600;
+            line-height: 1;
+            height: 16px;
+        }
+
+        .filter-actions-buttons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
         }
 
         .btn-secondary {
@@ -364,7 +388,11 @@
 
                 .filter-actions {
                     width: 100%;
-                    justify-content: flex-start;
+                    min-width: 0;
+                }
+
+                .filter-actions-label {
+                    display: none;
                 }
         }
 
@@ -457,8 +485,11 @@
             </div>
 
             <div class="filter-actions">
-                <button type="submit">Применить</button>
-                <a th:href="@{/web/bookings}" class="btn btn-secondary">Сбросить</a>
+                <span class="filter-actions-label" aria-hidden="true">Действия</span>
+                <div class="filter-actions-buttons">
+                    <button type="submit">Применить</button>
+                    <a th:href="@{/web/bookings}" class="btn btn-secondary">Сбросить</a>
+                </div>
             </div>
         </form>
     </div>
@@ -489,7 +520,7 @@
             ↓
             Spring передаёт список bookings из контроллера
             -->
-            <tr th:each="b : ${bookings}">
+            <tr th:each="b : ${upcomingBookings}">
                 <!--
                 th:text заменяет содержимое ячейки
                 -->
@@ -527,6 +558,44 @@
 
         </table>
             </div>
+    </div>
+
+    <div class="card" th:if="${#lists.size(passedBookings) > 0}">
+        <h2>Прошедшие записи за выбранный день</h2>
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Имя</th>
+                    <th>Телефон</th>
+                    <th>Описание работ</th>
+                    <th>Дата</th>
+                    <th th:if="${isAdmin}">Специалист</th>
+                    <th>Действия</th>
+                </tr>
+
+                <tr th:each="b : ${passedBookings}">
+                    <td th:text="${b.clientName}"></td>
+                    <td th:text="${b.phone}"></td>
+                    <td th:text="${b.workDescription}"></td>
+                    <td th:text="${#temporals.format(b.bookingTime, 'dd.MM.yyyy HH:mm')}"></td>
+                    <td th:if="${isAdmin}" th:text="${b.user != null ? b.user.username : '-'}"></td>
+                    <td class="actions-cell">
+                        <div class="actions">
+                            <form th:action="@{'/web/bookings/delete/' + ${b.id}}"
+                                  method="post"
+                                  style="display:inline;"
+                                  onsubmit="return confirmDelete()">
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}"/>
+                                <button type="submit">Удалить</button>
+                            </form>
+                            <a th:href="@{'/web/bookings/edit/' + ${b.id}}" class="btn">Изменить</a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 
 </div>
