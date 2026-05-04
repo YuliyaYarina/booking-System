@@ -12,8 +12,12 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
 
 @Controller
 @RequestMapping("/web/bookings")
@@ -28,22 +32,52 @@ public class WebBookingController {
     }
 
     @GetMapping
-    public String view(Model model, Principal principal) {
+    public String view(
+            @RequestParam(required = false) String bookingDay,
+            @RequestParam(required = false) Long masterId,
+            Model model
+    ) {
         User currentUser = userService.getCurrentUser();
         if (currentUser == null) {
             return "redirect:/login";
         }
-        List<Booking> bookings;
 
-        if (currentUser.getRoles().contains(Role.ADMIN)) {
-            // ADMIN видит все записи
-            bookings = bookingService.getAll();
-        } else {
-            // USER видит только свои записи
-            bookings = bookingService.findByUserId(currentUser.getId());
+        LocalDate selectedDay = parseDay(bookingDay);
+        if (selectedDay == null) {
+            selectedDay = LocalDate.now();
+        }
+        boolean isAdmin = currentUser.getRoles().contains(Role.ADMIN);
+        Long selectedMasterId = isAdmin ? masterId : null;
+
+        List<Booking> bookings = bookingService.filterBookings(
+                currentUser,
+                selectedDay,
+                selectedMasterId
+        );
+
+        List<Booking> upcomingBookings = bookings;
+        List<Booking> passedBookings = List.of();
+        LocalDateTime now = LocalDateTime.now();
+        if (selectedDay.equals(LocalDate.now())) {
+            upcomingBookings = bookings.stream()
+                    .filter(booking -> !booking.getBookingTime().isBefore(now))
+                    .collect(Collectors.toList());
+            passedBookings = bookings.stream()
+                    .filter(booking -> booking.getBookingTime().isBefore(now))
+                    .collect(Collectors.toList());
         }
 
         model.addAttribute("bookings", bookings);
+        model.addAttribute("upcomingBookings", upcomingBookings);
+        model.addAttribute("passedBookings", passedBookings);
+        model.addAttribute("selectedBookingDay", selectedDay.toString());
+        model.addAttribute("selectedMasterId", selectedMasterId);
+        model.addAttribute("isAdmin", isAdmin);
+
+        if (isAdmin) {
+            model.addAttribute("masters", userService.findBookableUsers());
+        }
+
         return "bookings";
     }
 
@@ -80,11 +114,11 @@ public class WebBookingController {
     }
 
     @PostMapping("/edit/{id}")
-    public String update(        @PathVariable Long id,
-                                 @RequestParam String clientName,
-                                 @RequestParam String phone,
-                                 @RequestParam String workDescription,
-                                 @RequestParam String bookingTime
+    public String update(@PathVariable Long id,
+                         @RequestParam String clientName,
+                         @RequestParam String phone,
+                         @RequestParam String workDescription,
+                         @RequestParam String bookingTime
     ) {
         Booking booking = bookingService.findById(id);
         checkOwnershipOrAdmin(booking);
@@ -96,6 +130,13 @@ public class WebBookingController {
         bookingService.save(booking);
 
         return "redirect:/web/bookings";
+    }
+
+    private LocalDate parseDay(String bookingDay) {
+        if (bookingDay == null || bookingDay.isBlank()) {
+            return null;
+        }
+        return LocalDate.parse(bookingDay);
     }
 
     private void checkOwnershipOrAdmin(Booking booking) {

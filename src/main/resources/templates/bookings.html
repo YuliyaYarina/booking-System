@@ -78,6 +78,11 @@
             margin-bottom: 20px;
         }
 
+        h2 {
+            margin: 0 0 14px;
+            font-size: 18px;
+        }
+
         /* ===== 6. ФОРМА ===== */
         .form-row {
             display: flex;
@@ -85,11 +90,21 @@
         }
 
         /* ===== 7. INPUT ===== */
-        input {
+        .form-row input {
             flex: 1; /* все поля одинаковой ширины */
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 6px;
+        }
+
+        .filter-date,
+        .filter-master {
+            height: 42px;
+            padding: 0 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
         }
 
         textarea {
@@ -103,8 +118,10 @@
         }
 
         /* эффект при клике */
-        input:focus,
-        textarea:focus {
+        .form-row input:focus,
+        textarea:focus,
+        .filter-date:focus,
+        .filter-master:focus {
             border-color: #2575fc;
             outline: none;
         }
@@ -113,13 +130,134 @@
             margin-top: 10px;
         }
 
+        .filter-card {
+            padding: 14px 16px;
+            background: #fff;
+        }
+
+        .filters-form {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+
+        .filter-fields {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #7a7a7a;
+            font-weight: 600;
+        }
+
+        .filter-date,
+        .filter-master {
+            width: 100%;
+            min-width: 0;
+            background: #fff;
+        }
+
+        .filter-group-date {
+            flex: 1 1 190px;
+        }
+
+        .filter-group-master {
+            flex: 1 1 220px;
+        }
+
+        .filter-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: stretch;
+            flex: 0 0 auto;
+            min-width: 232px;
+        }
+
+        .filter-actions button,
+        .filter-actions .btn {
+            min-width: 112px;
+            text-align: center;
+        }
+
+        .filter-actions-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: transparent;
+            user-select: none;
+            font-weight: 600;
+            line-height: 1;
+            height: 16px;
+        }
+
+        .filter-actions-buttons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #1f1f1f;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #eaeaea;
+        }
+
+        :root {
+            --btn-height: 40px;
+            --btn-font-size: 14px;
+            --btn-font-weight: 600;
+            --btn-radius: 6px;
+            --btn-padding-x: 16px;
+        }
+
+        .btn,
+        button,
+        .filter-actions .btn,
+        .filter-actions button,
+        .actions .btn,
+        .actions button {
+            height: var(--btn-height);
+            min-height: var(--btn-height);
+            padding: 0 var(--btn-padding-x);
+            border-radius: var(--btn-radius);
+            font-family: Arial, sans-serif;
+            font-size: var(--btn-font-size);
+            font-weight: var(--btn-font-weight);
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-sizing: border-box;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+
         /* ===== 8. КНОПКА ===== */
         button {
-            padding: 12px 20px;
             background: black;
             color: white;
             border: none;
-            border-radius: 6px;
             cursor: pointer;
         }
 
@@ -149,14 +287,15 @@
             vertical-align: top;
         }
 
-        th:nth-child(4),
-        td:nth-child(4) {
+        th:nth-child(3),
+        td:nth-child(3) {
             width: 30%;
         }
 
-        td:nth-child(4) {
+        td:nth-child(3) {
             white-space: pre-wrap;
             word-break: break-word;
+            /*overflow-wrap: anywhere;*/
         }
 
         th:last-child,
@@ -170,7 +309,7 @@
 
         .actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
         }
 
@@ -186,7 +325,6 @@
         table button[type="submit"] {
             background: #e74c3c;
             margin-right: 0;
-            padding: 10px 14px;
         }
 
         table button[type="submit"]:hover {
@@ -203,12 +341,8 @@
         }
 
         .btn { /* синяя кнопка "Изменить" */
-            display: inline-block;
-            padding: 10px 14px;
             background: #3498db;
             color: #fff;
-            border-radius: 6px;
-            text-decoration: none;
         }
 
             .btn:hover {
@@ -235,6 +369,30 @@
                 .button-row {
                     width: 100%;
                     flex: 1 1 100%;
+                }
+
+                .filters-form {
+                    flex-wrap: wrap;
+                    align-items: stretch;
+                }
+
+                .filter-fields {
+                    width: 100%;
+                    flex-wrap: wrap;
+                }
+
+                .filter-group-date,
+                .filter-group-master {
+                    flex: 1 1 100%;
+                }
+
+                .filter-actions {
+                    width: 100%;
+                    min-width: 0;
+                }
+
+                .filter-actions-label {
+                    display: none;
                 }
         }
 
@@ -305,6 +463,37 @@
 
     </div>
 
+    <div class="card filter-card">
+        <form th:action="@{/web/bookings}" method="get" class="filters-form">
+            <div class="filter-fields">
+                <div class="filter-group filter-group-date">
+                    <label for="bookingDay">День записи</label>
+                    <input id="bookingDay" class="filter-date" type="date" name="bookingDay" th:value="${selectedBookingDay}">
+                </div>
+
+                <div class="filter-group filter-group-master" th:if="${isAdmin}">
+                    <label for="masterId">Мастер</label>
+                    <select id="masterId" name="masterId" class="filter-master">
+                        <option value="">Все мастера</option>
+                        <option th:each="master : ${masters}"
+                                th:value="${master.id}"
+                                th:text="${master.username}"
+                                th:selected="${selectedMasterId != null and selectedMasterId == master.id}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <span class="filter-actions-label" aria-hidden="true">Действия</span>
+                <div class="filter-actions-buttons">
+                    <button type="submit">Применить</button>
+                    <a th:href="@{/web/bookings}" class="btn btn-secondary">Сбросить</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <!-- ===== форма фильтрации ===== -->
     <script>
         function confirmDelete() {
@@ -318,11 +507,11 @@
         <table>
 
             <tr>
-                <th>ID</th>
                 <th>Имя</th>
                 <th>Телефон</th>
                 <th>Описание работ</th>
                 <th>Дата</th>
+                <th th:if="${isAdmin}">Специалист</th>
                 <th>Действия</th>
             </tr>
 
@@ -331,19 +520,18 @@
             ↓
             Spring передаёт список bookings из контроллера
             -->
-            <tr th:each="b : ${bookings}">
-
+            <tr th:each="b : ${upcomingBookings}">
                 <!--
                 th:text заменяет содержимое ячейки
                 -->
-                <td th:text="${b.id}"></td>
                 <td th:text="${b.clientName}"></td>
                 <td th:text="${b.phone}"></td>
                 <td th:text="${b.workDescription}"></td>
                 <!-- Красивый формат даты -->
                 <td th:text="${#temporals.format(b.bookingTime, 'dd.MM.yyyy HH:mm')}"></td>
-                <td class="действия-ячейка">
-                    <div class="действия">
+                <td th:if="${isAdmin}" th:text="${b.user != null ? b.user.username : '-'}"></td>
+                <td class="actions-cell">
+                    <div class="actions">
 
                     <!-- ===== УДАЛЕНИЕ ===== -->
                     <form th:action="@{'/web/bookings/delete/' + ${b.id}}"
@@ -370,17 +558,44 @@
 
         </table>
             </div>
-<!--        <=========Pagination (странички) =========>-->
-        <div style="margin-top:15px;">
-    <span th:if="${page > 1}">
-        <a th:href="@{/web/bookings(page=${page - 1})}">« Назад</a>
-    </span>
-            <span th:text="${page}">1</span>
-            <span th:if="${hasNext}">
-        <a th:href="@{/web/bookings(page=${page + 1})}">Вперед »</a>
-    </span>
-        </div>
+    </div>
 
+    <div class="card" th:if="${#lists.size(passedBookings) > 0}">
+        <h2>Прошедшие записи за выбранный день</h2>
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Имя</th>
+                    <th>Телефон</th>
+                    <th>Описание работ</th>
+                    <th>Дата</th>
+                    <th th:if="${isAdmin}">Специалист</th>
+                    <th>Действия</th>
+                </tr>
+
+                <tr th:each="b : ${passedBookings}">
+                    <td th:text="${b.clientName}"></td>
+                    <td th:text="${b.phone}"></td>
+                    <td th:text="${b.workDescription}"></td>
+                    <td th:text="${#temporals.format(b.bookingTime, 'dd.MM.yyyy HH:mm')}"></td>
+                    <td th:if="${isAdmin}" th:text="${b.user != null ? b.user.username : '-'}"></td>
+                    <td class="actions-cell">
+                        <div class="actions">
+                            <form th:action="@{'/web/bookings/delete/' + ${b.id}}"
+                                  method="post"
+                                  style="display:inline;"
+                                  onsubmit="return confirmDelete()">
+                                <input type="hidden"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}"/>
+                                <button type="submit">Удалить</button>
+                            </form>
+                            <a th:href="@{'/web/bookings/edit/' + ${b.id}}" class="btn">Изменить</a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 
 </div>

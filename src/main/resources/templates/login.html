@@ -49,6 +49,9 @@
             border: 1px solid #ccc;
             border-radius: 6px;
             font-size: 16px;
+            /*color: #666;*/
+            /*caret-color: #999;*/
+            cursor: text;
             transition: all 0.3s ease;
         }
 
@@ -92,14 +95,77 @@
             outline: none;
         }
 
-        /* ===== 9. ГЛАЗ 👁 ===== */
+         /*===== 9. ГЛАЗ 👁 ===== */
         .eye {
             position: absolute;
-            right: 12px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: none;
+            background: transparent;
+            color: #5f6f82;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-size: 18px;
+            transition: color 0.2s ease;
+        }
+
+        .eye:hover {
+            color: #2575fc;
+        }
+
+        .eye:focus-visible {
+            outline: 2px solid rgba(37, 117, 252, 0.35);
+            outline-offset: 2px;
+            border-radius: 999px;
+        }
+
+        .eye-icon {
+            position: relative;
+            width: 22px;
+            height: 14px;
+            display: block;
+        }
+
+        .eye-icon::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-top: 2px solid currentColor;
+            border-radius: 14px 14px 10px 10px;
+        }
+
+        .eye-pupil {
+            position: absolute;
+            left: 50%;
+            top: 52%;
+            width: 6px;
+            height: 6px;
+            border: 1.8px solid currentColor;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: transparent;
+        }
+
+        .eye-slash {
+            position: absolute;
+            left: 2px;
+            top: 50%;
+            width: 18px;
+            height: 2px;
+            border-radius: 999px;
+            background: currentColor;
+            transform: translateY(-50%) rotate(-30deg);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .eye.is-hidden .eye-slash {
+            opacity: 1;
         }
 
         /* ===== 10. КНОПКА ===== */
@@ -195,7 +261,13 @@
         <div class="input-group">
             <input type="password" name="password" id="password" required placeholder=" ">
             <label>Пароль</label>
-            <span class="eye" id="eye">👁</span>
+
+            <button type="button" class="eye is-hidden" id="eye" aria-label="Показать пароль" aria-pressed="false">
+                <span class="eye-icon" aria-hidden="true">
+                    <span class="eye-pupil"></span>
+                    <span class="eye-slash"></span>
+                </span>
+            </button>
         </div>
 
         <button type="submit" id="btn">Войти</button>
@@ -213,9 +285,20 @@
     const box = document.getElementById('box');
 
     /* ===== 1. ПОКАЗАТЬ ПАРОЛЬ ===== */
-    eye.onclick = () => {
-        password.type = password.type === "password" ? "text" : "password";
+    const updateEyeState = () => {
+        const hidden = password.type === "password";
+        eye.classList.toggle('is-hidden', hidden);
+        eye.setAttribute('aria-label', hidden ? 'Показать пароль' : 'Скрыть пароль');
+        eye.setAttribute('aria-pressed', String(!hidden));
     };
+
+    eye.addEventListener('click', () => {
+        password.type = password.type === "password" ? "text" : "password";
+        updateEyeState();
+    });
+
+    updateEyeState();
+
 
     /* ===== 2. АНИМАЦИЯ КНОПКИ ===== */
     form.addEventListener('submit', () => {
