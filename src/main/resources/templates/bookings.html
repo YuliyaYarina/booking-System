@@ -137,7 +137,7 @@
 
         .filters-form {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: 10px;
             flex-wrap: nowrap;
         }
@@ -166,7 +166,7 @@
 
         .filter-date,
         .filter-master {
-            width: 100%; /*?????*/
+            width: 100%;
             min-width: 0;
             background: #fff;
         }
@@ -181,15 +181,34 @@
 
         .filter-actions {
             display: flex;
-            gap: 6px;
-            align-items: center;
+            flex-direction: column;
+            gap: 4px;
+            align-items: stretch;
             flex: 0 0 auto;
+            min-width: 232px;
         }
 
         .filter-actions button,
         .filter-actions .btn {
             min-width: 112px;
             text-align: center;
+        }
+
+        .filter-actions-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: transparent;
+            user-select: none;
+            font-weight: 600;
+            line-height: 1;
+            height: 16px;
+        }
+
+        .filter-actions-buttons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
         }
 
         .btn-secondary {
@@ -369,7 +388,11 @@
 
                 .filter-actions {
                     width: 100%;
-                    justify-content: flex-start;
+                    min-width: 0;
+                }
+
+                .filter-actions-label {
+                    display: none;
                 }
         }
 
@@ -462,8 +485,11 @@
             </div>
 
             <div class="filter-actions">
-                <button type="submit">Применить</button>
-                <a th:href="@{/web/bookings}" class="btn btn-secondary">Сбросить</a>
+                <span class="filter-actions-label" aria-hidden="true">Действия</span>
+                <div class="filter-actions-buttons">
+                    <button type="submit">Применить</button>
+                    <a th:href="@{/web/bookings}" class="btn btn-secondary">Сбросить</a>
+                </div>
             </div>
         </form>
     </div>
