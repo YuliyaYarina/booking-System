@@ -4,6 +4,7 @@ import org.example.bookingsystem.model.Booking;
 
 import org.example.bookingsystem.model.Role;
 import org.example.bookingsystem.model.User;
+import org.example.bookingsystem.model.Worker;
 import org.example.bookingsystem.repository.BookingRepository;
 import org.example.bookingsystem.service.BookingService;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking create(Booking booking, User user) {
-        booking.setUser(user);
+    public Booking create(Booking booking, Worker worker) {
+        booking.setWorker(worker);
         return repository.save(booking);
     }
 
@@ -39,18 +40,18 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAll(User user) {
-        return repository.findByUser(user);
+    public List<Booking> getAll(Worker worker) {
+        return repository.findByWorker(worker);
     }
 
     @Override
     public List<Booking> getByPhone(String phone) {
-        return repository.findByPhone(phone);
+        return repository.findByClientPhone(phone);
     }
 
     @Override
     public List<Booking> getByDate(String start, String end) {
-        return repository.findByBookingTimeBetween(
+        return repository.findByBookingDateTimeBetween(
                 LocalDateTime.parse(start),
                 LocalDateTime.parse(end)
         );
@@ -62,8 +63,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> findByUserId(Long userId) {
-        return repository.findByUserId(userId);
+    public List<Booking> findByWorkerId(Long workerId) {
+        return repository.findByWorkerId(workerId);
     }
 
     @Override
@@ -75,26 +76,26 @@ public class BookingServiceImpl implements BookingService {
 
         if (isAdmin) {
             if (dayStart != null && masterId != null) {
-                return sortByTime(repository.findByBookingTimeBetweenAndUserId(dayStart, dayEnd, masterId));
+                return sortByTime(repository.findByBookingDateTimeBetweenAndWorkerId(dayStart, dayEnd, masterId));
             }
             if (dayStart != null) {
-                return sortByTime(repository.findByBookingTimeBetween(dayStart, dayEnd));
+                return sortByTime(repository.findByBookingDateTimeBetween(dayStart, dayEnd));
             }
             if (masterId != null) {
-                return sortByTime(repository.findByUserId(masterId));
+                return sortByTime(repository.findByWorkerId(masterId));
             }
             return sortByTime(repository.findAll());
         }
 
         if (dayStart != null) {
-            return sortByTime(repository.findByBookingTimeBetweenAndUserId(dayStart, dayEnd, currentUser.getId()));
+           return sortByTime(repository.findByBookingDateTimeBetweenAndWorkerId(dayStart, dayEnd, currentUser.getId()));
         }
-        return sortByTime(repository.findByUserId(currentUser.getId()));
+        return sortByTime(repository.findByWorkerId(currentUser.getId()));
     }
 
     private List<Booking> sortByTime(List<Booking> bookings) {
         return bookings.stream()
-                .sorted(Comparator.comparing(Booking::getBookingTime))
+                .sorted(Comparator.comparing(Booking::getBookingDateTime))
                 .toList();
     }
 

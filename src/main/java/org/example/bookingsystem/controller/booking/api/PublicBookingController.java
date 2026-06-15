@@ -1,9 +1,10 @@
-package org.example.bookingsystem.controller;
+package org.example.bookingsystem.controller.booking.api;
 
 import org.example.bookingsystem.model.Booking;
-import org.example.bookingsystem.model.User;
+import org.example.bookingsystem.model.Worker;
 import org.example.bookingsystem.service.BookingService;
-import org.example.bookingsystem.service.UserService;
+import org.example.bookingsystem.service.WorkerService;
+import org.example.bookingsystem.service.impl.WorkerServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,33 +20,29 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class PublicBookingController {
 
     private final BookingService bookingService;
-    private final UserService userService;
+    private final WorkerService workerService;
 
-    public PublicBookingController(BookingService bookingService, UserService userService) {
+    public PublicBookingController(BookingService bookingService, WorkerServiceImpl workerService) {
         this.bookingService = bookingService;
-        this.userService = userService;
+        this.workerService = workerService;
     }
 
     @GetMapping("/public/booking")
     public String bookingPage(Model model) {
-        model.addAttribute("users", userService.findBookableUsers());
+        model.addAttribute("users", workerService.findBookableWorkers());
         return "public-booking";
     }
 
     @PostMapping("/public/booking")
-    public String createPublicBooking(@RequestParam String clientName,
-                                      @RequestParam String phone,
-                                      @RequestParam String workDescription,
+    public String createPublicBooking(@RequestParam String workDescription,
                                       @RequestParam String bookingTime,
                                       @RequestParam Long userId) {
-        User selectedUser = userService.findById(userId)
+        Worker selectedUser = workerService.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Пользователь не найден"));
 
         Booking booking = new Booking();
-        booking.setClientName(clientName);
-        booking.setPhone(phone);
         booking.setWorkDescription(workDescription);
-        booking.setBookingTime(LocalDateTime.parse(bookingTime));
+        booking.setBookingDateTime(LocalDateTime.parse(bookingTime));
         bookingService.create(booking, selectedUser);
 
         return "redirect:/public/booking?success=true";

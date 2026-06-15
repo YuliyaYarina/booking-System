@@ -1,7 +1,7 @@
 package org.example.bookingsystem.repository;
 
 import org.example.bookingsystem.model.Booking;
-import org.example.bookingsystem.model.User;
+import org.example.bookingsystem.model.Worker;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findByPhone(String phone);
+    List<Booking> findByClientPhone(String phone);
 
-    List<Booking> findByBookingTimeBetween(LocalDateTime start, LocalDateTime end);
+    List<Booking> findByBookingDateTimeBetween(LocalDateTime start, LocalDateTime end);
 
-    List<Booking> findByBookingTimeBetweenAndUserId(LocalDateTime start, LocalDateTime end, Long userId);
+    List<Booking> findByBookingDateTimeBetweenAndWorkerId(LocalDateTime start, LocalDateTime end, Long workerId);
 
-    List<Booking> findByUser(User user);
+    List<Booking> findByWorker(Worker worker);
 
-    List<Booking> findByUserId(Long userId);
+    List<Booking> findByWorkerId(Long workerId);
 }

@@ -2,6 +2,7 @@ package org.example.bookingsystem.service;
 
 import org.example.bookingsystem.model.Booking;
 import org.example.bookingsystem.model.User;
+import org.example.bookingsystem.model.Worker;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
@@ -10,11 +11,11 @@ import java.util.List;
 public interface BookingService {
     Booking save(Booking booking);
 
-    Booking create(Booking booking, User user);
+    Booking create(Booking booking, Worker worker);
 
     List<Booking> getAll();
 
-    List<Booking> getAll(User user);
+    List<Booking> getAll(Worker worker);
 
     List<Booking> getByPhone(String phone);
 
@@ -22,7 +23,7 @@ public interface BookingService {
 
     void delete(@PathVariable Long id);
 
-    List<Booking> findByUserId(Long userId);
+    List<Booking> findByWorkerId(Long workerId);
 
     List<Booking> filterBookings(User currentUser, LocalDate bookingDay, Long masterId);
 

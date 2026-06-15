@@ -434,20 +434,6 @@
             <div class="form-row">
 
                 <!--
-                name="clientName"
-                ↓
-                попадёт в контроллер как @RequestParam String clientName
-                -->
-                <input type="text" name="clientName" placeholder="Имя" required>
-
-                <!--
-                name="phone"
-                ↓
-                попадёт в контроллер
-                -->
-                <input type="text" name="phone" placeholder="Телефон" required>
-
-                <!--
                 datetime-local = встроенный выбор даты и времени
                 -->
                 <input type="datetime-local" name="bookingTime" required>
@@ -507,7 +493,7 @@
         <table>
 
             <tr>
-                <th>Имя</th>
+                <th>Клиент</th>
                 <th>Телефон</th>
                 <th>Описание работ</th>
                 <th>Дата</th>
@@ -524,12 +510,12 @@
                 <!--
                 th:text заменяет содержимое ячейки
                 -->
-                <td th:text="${b.clientName}"></td>
-                <td th:text="${b.phone}"></td>
+                <td th:text="${b.getClient().getName()}"></td>
+                <td th:text="${b.getClient().getPhone()}"></td>
                 <td th:text="${b.workDescription}"></td>
                 <!-- Красивый формат даты -->
-                <td th:text="${#temporals.format(b.bookingTime, 'dd.MM.yyyy HH:mm')}"></td>
-                <td th:if="${isAdmin}" th:text="${b.user != null ? b.user.username : '-'}"></td>
+                <td th:text="${#temporals.format(b.getBookingDateTime(), 'dd.MM.yyyy HH:mm')}"></td>
+                <td th:if="${isAdmin}" th:text="${b.getWorker() != null ? b.getWorker().getName() : '-'}"></td>
                 <td class="actions-cell">
                     <div class="actions">
 
@@ -574,11 +560,11 @@
                 </tr>
 
                 <tr th:each="b : ${passedBookings}">
-                    <td th:text="${b.clientName}"></td>
-                    <td th:text="${b.phone}"></td>
+                    <td th:text="${b.getClient().getName()}"></td>
+                    <td th:text="${b.getClient().getPhone()}"></td>
                     <td th:text="${b.workDescription}"></td>
-                    <td th:text="${#temporals.format(b.bookingTime, 'dd.MM.yyyy HH:mm')}"></td>
-                    <td th:if="${isAdmin}" th:text="${b.user != null ? b.user.username : '-'}"></td>
+                    <td th:text="${#temporals.format(b.getBookingDateTime(), 'dd.MM.yyyy HH:mm')}"></td>
+                    <td th:if="${isAdmin}" th:text="${b.getWorker() != null ? b.getWorker().getName() : '-'}"></td>
                     <td class="actions-cell">
                         <div class="actions">
                             <form th:action="@{'/web/bookings/delete/' + ${b.id}}"

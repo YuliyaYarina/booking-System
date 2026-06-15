@@ -1,34 +1,31 @@
-package org.example.bookingsystem.controller.web.bookings;
+package org.example.bookingsystem.controller.booking.web;
 
 import org.example.bookingsystem.model.Booking;
 import org.example.bookingsystem.model.Role;
 import org.example.bookingsystem.model.User;
+import org.example.bookingsystem.model.Worker;
 import org.example.bookingsystem.service.BookingService;
-import org.example.bookingsystem.service.UserService;
+import org.example.bookingsystem.service.impl.WorkerServiceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
 
 @Controller
 @RequestMapping("/web/bookings")
 public class WebBookingController {
 
     private final BookingService bookingService;
-    private final UserService userService;
+    private final WorkerServiceImpl workerService;
 
-    public WebBookingController(BookingService bookingService, UserService userService) {
+    public WebBookingController(BookingService bookingService, WorkerServiceImpl workerService) {
         this.bookingService = bookingService;
-        this.userService = userService;
+        this.workerService = workerService;
     }
 
     @GetMapping
@@ -37,7 +34,7 @@ public class WebBookingController {
             @RequestParam(required = false) Long masterId,
             Model model
     ) {
-        User currentUser = userService.getCurrentUser();
+        Worker currentUser = workerService.getCurrentWorker();
         if (currentUser == null) {
             return "redirect:/login";
         }
@@ -60,11 +57,11 @@ public class WebBookingController {
         LocalDateTime now = LocalDateTime.now();
         if (selectedDay.equals(LocalDate.now())) {
             upcomingBookings = bookings.stream()
-                    .filter(booking -> !booking.getBookingTime().isBefore(now))
-                    .collect(Collectors.toList());
+                    .filter(booking -> !booking.getBookingDateTime().isBefore(now))
+                    .toList();
             passedBookings = bookings.stream()
-                    .filter(booking -> booking.getBookingTime().isBefore(now))
-                    .collect(Collectors.toList());
+                    .filter(booking -> booking.getBookingDateTime().isBefore(now))
+                    .toList();
         }
 
         model.addAttribute("bookings", bookings);
@@ -75,7 +72,7 @@ public class WebBookingController {
         model.addAttribute("isAdmin", isAdmin);
 
         if (isAdmin) {
-            model.addAttribute("masters", userService.findBookableUsers());
+            model.addAttribute("masters", workerService.findBookableWorkers());
         }
 
         return "bookings";
@@ -83,17 +80,13 @@ public class WebBookingController {
 
     @PostMapping
     public String create(
-            @RequestParam String clientName,
-            @RequestParam String phone,
             @RequestParam String workDescription,
             @RequestParam String bookingTime
     ) {
         Booking booking = new Booking();
-        booking.setClientName(clientName);
-        booking.setPhone(phone);
         booking.setWorkDescription(workDescription);
-        booking.setBookingTime(LocalDateTime.parse(bookingTime));
-        bookingService.create(booking, userService.getCurrentUser());
+        booking.setBookingDateTime(LocalDateTime.parse(bookingTime));
+        bookingService.create(booking, workerService.getCurrentWorker());
         return "redirect:/web/bookings";
     }
 
@@ -115,18 +108,14 @@ public class WebBookingController {
 
     @PostMapping("/edit/{id}")
     public String update(@PathVariable Long id,
-                         @RequestParam String clientName,
-                         @RequestParam String phone,
                          @RequestParam String workDescription,
                          @RequestParam String bookingTime
     ) {
         Booking booking = bookingService.findById(id);
         checkOwnershipOrAdmin(booking);
 
-        booking.setClientName(clientName);
-        booking.setPhone(phone);
         booking.setWorkDescription(workDescription);
-        booking.setBookingTime(LocalDateTime.parse(bookingTime));
+        booking.setBookingDateTime(LocalDateTime.parse(bookingTime));
         bookingService.save(booking);
 
         return "redirect:/web/bookings";
@@ -140,8 +129,8 @@ public class WebBookingController {
     }
 
     private void checkOwnershipOrAdmin(Booking booking) {
-        User currentUser = userService.getCurrentUser();
-        if (!booking.getUser().getId().equals(currentUser.getId()) &&
+        User currentUser = workerService.getCurrentWorker();
+        if (!booking.getWorker().getId().equals(currentUser.getId()) &&
                 !currentUser.getRoles().contains(Role.ADMIN)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }

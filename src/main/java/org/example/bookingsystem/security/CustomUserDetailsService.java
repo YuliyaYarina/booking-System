@@ -1,7 +1,8 @@
 package org.example.bookingsystem.security;
 
-import org.example.bookingsystem.model.User;
-import org.example.bookingsystem.repository.UserRepository;
+import org.example.bookingsystem.model.Worker;
+import org.example.bookingsystem.service.WorkerService;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,27 +15,28 @@ import java.util.stream.Collectors;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final WorkerService workerService;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public CustomUserDetailsService(WorkerService workerService) {
+        this.workerService = workerService;
     }
 
 
+    @NonNull
     @Override
-    public UserDetails loadUserByUsername(String username){
-
-        User user = userRepository.findByUsername(username)
+    public UserDetails loadUserByUsername(@NonNull String username){
+//
+        Worker worker = workerService.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        Set<SimpleGrantedAuthority> authorities = user.getRoles()
+        Set<SimpleGrantedAuthority> authorities = worker.getRoles()
                 .stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
                 .collect(Collectors.toSet());
 
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
+                .withUsername(worker.getUsername())
+                .password(worker.getPassword())
                 .authorities(authorities)
                 .build();
     }

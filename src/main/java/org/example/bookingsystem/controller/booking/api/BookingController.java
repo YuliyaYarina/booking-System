@@ -1,9 +1,9 @@
-package org.example.bookingsystem.controller.api.bookings;
+package org.example.bookingsystem.controller.booking.api;
 
 import org.example.bookingsystem.model.Booking;
-import org.example.bookingsystem.model.User;
+import org.example.bookingsystem.model.Worker;
 import org.example.bookingsystem.service.BookingService;
-import org.example.bookingsystem.service.UserService;
+import org.example.bookingsystem.service.impl.WorkerServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,18 +13,18 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookingService;
-    private final UserService userService;
+    private final WorkerServiceImpl workerService;
 
-    public BookingController(UserService userService, BookingService service) {
+    public BookingController(WorkerServiceImpl workerService, BookingService service) {
         this.bookingService = service;
-        this.userService = userService;
+        this.workerService = workerService;
     }
 
     @PostMapping
     public Booking create(@RequestBody Booking booking) {
 
-        User user = userService.getCurrentUser();
-        return bookingService.create(booking, user);
+        Worker worker = (Worker) workerService.getCurrentWorker();
+        return bookingService.create(booking, worker);
     }
 
     @GetMapping

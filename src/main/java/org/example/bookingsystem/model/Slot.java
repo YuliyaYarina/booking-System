@@ -7,24 +7,22 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-public class Booking {
+@Table(name = "slots")
+public class Slot {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime bookingDateTime;
+    private LocalDateTime startTime;
 
-    private String workDescription;
+    private LocalDateTime endTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private SlotState state;
 
     @ManyToOne
     @JoinColumn(name = "worker_id")
     private Worker worker;
-
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private Client client;
-
-//    @Enumerated(EnumType.STRING)
-    private SlotState status;
 }
